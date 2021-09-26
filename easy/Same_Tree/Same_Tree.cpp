@@ -5,7 +5,7 @@ Given the roots of two binary trees p and q, write a function to check if they a
 
 Two binary trees are considered the same if they are structurally identical, and the nodes have the same value.
 
-Link: https://leetcode.com/problems/remove-element/
+Link: https://leetcode.com/problems/same-tree/
 */
 #include <bits/stdc++.h>
 
@@ -17,13 +17,9 @@ Link: https://leetcode.com/problems/remove-element/
 #define IN freopen("input.txt", "r", stdin);
 #define OUT freopen("output.txt", "w", stdout);
 
-#define MP make_pair
+#define TEST 3 //Choose the test
 
 using namespace std;
-
-typedef stack<char> stk;
-typedef pair<char, char> pcc; 
-
 
 struct TreeNode {
     int val;
@@ -34,21 +30,56 @@ struct TreeNode {
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  };
  
+//4ms
+bool isSameTreeV1(TreeNode* p, TreeNode* q) {
 
-bool isSameTree(TreeNode* p, TreeNode* q) {
-    
-    return false;
+    if(p  == nullptr && q == nullptr){
+        return true;
+    }
+    else if(p != nullptr && q==nullptr || q!=nullptr && p == nullptr){
+        return false;
+    }
+
+    if(p->val == q->val){
+        
+        if (isSameTreeV1(p->left,q->left)){
+            if(!isSameTreeV1(p->right,q->right)){
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+    return true;
 }
 
+//3ms
+bool isSameTree(TreeNode* p, TreeNode* q) {
+
+    if(p  == nullptr && q == nullptr) return true;
+
+    if(p == nullptr || q==nullptr) return false;
+
+    if(p->val != q->val) return false;
+
+    return isSameTree(p->left, q->left) &&
+            isSameTree(p->right,q->right); 
+}
+
+
 int main(){
-/*
-    vector<int> nums = {1,2,3,4,4,5,6};
-    
-    cout << removeElement(nums, 4)<<'\n';
-    cout<<"the array: ";
-    for(int x:nums){
-        cout <<x<<", ";
-    }
-    cout<<'\n';*/
+#if TEST == 1 
+    struct TreeNode p(1,new TreeNode(2),new TreeNode(3));
+    struct TreeNode q(1,new TreeNode(2),new TreeNode(3));
+#elif TEST == 2
+    struct TreeNode p(1,new TreeNode(2,new TreeNode(3),new TreeNode(7)),new TreeNode(50,new TreeNode(12),new TreeNode(70)));
+    struct TreeNode q(1,new TreeNode(2,new TreeNode(3),new TreeNode(7)),new TreeNode(50,new TreeNode(12),new TreeNode(70)));
+#elif TEST == 3
+    struct TreeNode p(1, new TreeNode(2),new TreeNode(3, nullptr, new TreeNode(4,nullptr,new TreeNode(55))));
+    struct TreeNode q(1, new TreeNode(2),new TreeNode(3, nullptr, new TreeNode(4,new TreeNode(77),new TreeNode(55))));
+#endif
+    cout << "le result => " <<isSameTree(&p , &q) << endl;
     return 0;
 }
